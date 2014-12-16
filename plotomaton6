@@ -1,0 +1,55 @@
+% plotomaton 6
+% to make histograms of random entropies looking very nice & regular
+
+SS = [S6 S8 S10 S12 S14 S16 S18 S20 S22 S24 S26 S28 S30 S32 S34...
+	S36 S38 S40 S42(1:2000) [S50;zeros(1000,1)] [S60;zeros(1700,1)]];
+beg = [400 400 300 200 100 100 100 100 100 100 100 100 100 100 50 50 50 50 50 40 30];
+nd = [2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 1000 300];
+p = zeros(2000,1);
+m = zeros(2000,1);
+
+for i = 1:21
+	if i <= 19
+		aang = 2*i + 4;
+	elseif i == 20
+		aang = 50;
+	elseif i == 21
+		aang = 60;
+	end
+
+	p = pop(p,page(aang));
+	m = pop(m,mean(SS(beg(i):nd(i),i)));
+
+	fig = figure(i);
+	fig.OuterPosition = [100 100 1000 1000];	% resize figure
+	counts = hist(SS(beg(i):nd(i),i),50);
+	
+	histogram(SS(beg(i):nd(i),i),50);
+	hold on
+
+	if i == 21
+		ymax = 18;
+	elseif i == 18
+		ymax = 130;
+	elseif (i == 9 || i == 8)
+		ymax = 120;
+	elseif i == 1
+		ymax = 80;
+	else
+		ymax = max(counts) + 5;
+	end
+	
+	ylim([0 ymax]);
+
+	plot( m(1:ymax+1), 0:ymax, 'm--');
+	plot( p(1:ymax+1), 0:ymax, 'b-');
+
+	legend( {'$S_{dyn}$', strcat('$\overline{S_{dyn}}$ =',num2str(m(1))),...
+		strcat('$S_{Page} =',num2str(p(1)),'$')},...
+		'Location','northeast','FontSize',16,'Interpreter','Latex');
+	xlabel('S','FontSize',20);
+	ylabel('Frequency','FontSize',20);
+
+	name = strcat('E:\qchaos\prettyplots\hist-dyn-S',int2str(aang),'.jpg');
+	saveas(gcf,name);	
+end
